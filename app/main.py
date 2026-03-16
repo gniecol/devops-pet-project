@@ -1,16 +1,15 @@
-# This is a sample Python script.
+from fastapi import FastAPI
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = FastAPI()
 
+@app.get("/")
+def read_root() -> dict[str, str]:
+    return {"message": "DevOps pet project is running"}
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@app.get("/hello")
+def read_hello() -> dict[str, str]:
+    return {"message": "Hello from FastAPI"}
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+@app.get("/health")
+def read_health() -> dict[str, str]:
+    return {"message": "OK"}
