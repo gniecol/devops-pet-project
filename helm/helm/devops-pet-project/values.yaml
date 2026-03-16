@@ -1,0 +1,32 @@
+namespace: devops-pet
+
+app:
+  name: notes-app
+  replicas: 1
+  image:
+    repository: ghcr.io/gniecol/devops-pet-project
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: NodePort
+    port: 8000
+    targetPort: 8000
+    nodePort: 30080
+  env:
+    redisHost: redis
+    redisPort: "6379"
+
+redis:
+  name: redis
+  replicas: 1
+  image:
+    repository: redis
+    tag: 7-alpine
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+    targetPort: 6379
+
+imagePullSecret:
+  enabled: false
+  name: ghcr-secret
