@@ -13,3 +13,7 @@ def read_hello() -> dict[str, str]:
 @app.get("/health")
 def read_health() -> dict[str, str]:
     return {"message": "OK"}
+
+@app.get("/version")
+def read_version() -> dict[str, str]:
+    return {"version": "1.0.0"}
