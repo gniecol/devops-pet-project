@@ -1,6 +1,7 @@
 import os
 import redis
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI()
 
@@ -8,6 +9,9 @@ redis_host = os.getenv("REDIS_HOST", "localhost")
 redis_port = int(os.getenv("REDIS_PORT", 6379))
 
 cache = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
+
+Instrumentator().instrument(app).expose(app)
+
 
 @app.get("/")
 def read_root() -> dict[str, str]:
