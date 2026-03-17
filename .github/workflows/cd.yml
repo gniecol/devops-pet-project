@@ -25,7 +25,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f docker/Dockerfile -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest .
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
 
       - name: Login to GHCR
         run: |
@@ -33,7 +33,7 @@ jobs:
 
       - name: Push image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Deploy with Helm
         run: |
@@ -41,4 +41,4 @@ jobs:
             --namespace $NAMESPACE \
             --create-namespace \
             --set app.image.repository=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }} \
-            --set app.image.tag=latest
+            --set app.image.tag=${{ github.sha }}
