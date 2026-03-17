@@ -1,0 +1,43 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: devops-pet-project
+  RELEASE_NAME: devops-pet-release
+  NAMESPACE: devops-pet
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6.0.2
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile -t ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest .
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install $RELEASE_NAME ./helm/devops-pet-project \
+            --namespace $NAMESPACE \
+            --create-namespace \
+            --set app.image.repository=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }} \
+            --set app.image.tag=latest
